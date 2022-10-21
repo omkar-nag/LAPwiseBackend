@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32922.545
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LapAPI", "LapAPI\LapAPI.csproj", "{45826DC1-2966-45F7-9387-E31EEDF4FE87}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{45826DC1-2966-45F7-9387-E31EEDF4FE87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45826DC1-2966-45F7-9387-E31EEDF4FE87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45826DC1-2966-45F7-9387-E31EEDF4FE87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45826DC1-2966-45F7-9387-E31EEDF4FE87}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D29091CB-A6B5-488E-A386-021C8F40E60F}
+	EndGlobalSection
+EndGlobal
