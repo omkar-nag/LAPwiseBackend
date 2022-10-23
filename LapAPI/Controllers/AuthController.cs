@@ -24,29 +24,29 @@ namespace LapAPI.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] AuthUserModel authUser)
         {
-
             if (authUser == null)
             {
                 return BadRequest("Invalid User");
             }
 
-            if (isValidUser(authUser))
+            var currUser = isValidUser(authUser);
+
+            if (currUser.Id != 0)
             {
                 var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("LAPwiseSecretKey@123"));
 
                 var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-                //var currentUser = 
-
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, authUser.UserName)
+                    new Claim(ClaimTypes.Name, currUser.UserName),
+                    new Claim(ClaimTypes.NameIdentifier, currUser.Id.ToString()),
                 };
 
                 var tokenOptions = new JwtSecurityToken(
                     issuer: "http://localhost:5152",
                     audience: "http://localhost:5152",
-                    claims: new List<Claim>(),
+                    claims: claims,
                     expires: DateTime.Now.AddDays(1),
                     signingCredentials: signingCredentials
                     );
@@ -55,21 +55,15 @@ namespace LapAPI.Controllers
 
                 return Ok(new { Token = tokenString });
             }
-
             return Unauthorized();
         }
 
-        private bool isValidUser(AuthUserModel authUser)
+        private Users isValidUser(AuthUserModel authUser)
         {
 
             Users user = this._usersRepository.GetUserByUserNameAndPassword(authUser);
 
-            System.Diagnostics.Debug.WriteLine("\n\n---------------");
-            System.Diagnostics.Debug.WriteLine(user.Email);
-            System.Diagnostics.Debug.WriteLine("\n\n---------------");
-
-
-            return true;
+            return user ?? new Users();
         }
     }
 }
