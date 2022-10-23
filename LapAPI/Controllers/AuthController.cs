@@ -1,4 +1,6 @@
-﻿using LapAPI.Models;
+﻿using LapAPI.BusinessLayer.UserRepository;
+using LapAPI.DataAccessLayer;
+using LapAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -12,19 +14,34 @@ namespace LapAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        [HttpPost("login")]
-        public IActionResult Login([FromBody] AuthUserModel user)
+        private IUsersRepository _usersRepository;
+
+        public AuthController(IUsersRepository usersRepository)
         {
-            if (user == null)
+            _usersRepository = usersRepository;
+        }
+
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] AuthUserModel authUser)
+        {
+
+            if (authUser == null)
             {
                 return BadRequest("Invalid User");
             }
 
-            if (isValidUser(user))
+            if (isValidUser(authUser))
             {
                 var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("LAPwiseSecretKey@123"));
 
                 var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+                //var currentUser = 
+
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, authUser.UserName)
+                };
 
                 var tokenOptions = new JwtSecurityToken(
                     issuer: "http://localhost:5152",
@@ -42,12 +59,15 @@ namespace LapAPI.Controllers
             return Unauthorized();
         }
 
-        private bool isValidUser(AuthUserModel user)
+        private bool isValidUser(AuthUserModel authUser)
         {
-            System.Diagnostics.Debug.WriteLine("\n\n");
 
-            System.Diagnostics.Debug.WriteLine(user.ToString());
-            System.Diagnostics.Debug.WriteLine("\n\n");
+            Users user = this._usersRepository.GetUserByUserNameAndPassword(authUser);
+
+            System.Diagnostics.Debug.WriteLine("\n\n---------------");
+            System.Diagnostics.Debug.WriteLine(user.Email);
+            System.Diagnostics.Debug.WriteLine("\n\n---------------");
+
 
             return true;
         }
