@@ -18,9 +18,9 @@ namespace LapAPI.Models
         [ForeignKey("Topics")]
         public int TopicId { get; set; }
 
-        public Topics topic { get; set; }
+        public Topics Topics { get; set; }
 
-        public Quizzes quiz { get; set; }
+        public Quizzes Quizzes { get; set; }
 
     }
 }

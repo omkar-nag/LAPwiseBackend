@@ -154,7 +154,10 @@ namespace LapAPI.Migrations
             modelBuilder.Entity("LapAPI.Models.SubTopics", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Content")
                         .IsRequired()
@@ -164,10 +167,12 @@ namespace LapAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TopicId")
+                    b.Property<int>("TopicsId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TopicsId");
 
                     b.ToTable("SubTopics");
                 });
@@ -228,73 +233,73 @@ namespace LapAPI.Migrations
 
             modelBuilder.Entity("LapAPI.Models.AssessmentResults", b =>
                 {
-                    b.HasOne("LapAPI.Models.Assessments", "assessment")
+                    b.HasOne("LapAPI.Models.Assessments", "Assessments")
                         .WithMany()
                         .HasForeignKey("AssessmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LapAPI.Models.Users", "user")
+                    b.HasOne("LapAPI.Models.Users", "Users")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("assessment");
+                    b.Navigation("Assessments");
 
-                    b.Navigation("user");
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("LapAPI.Models.Assessments", b =>
                 {
-                    b.HasOne("LapAPI.Models.Quizzes", "quiz")
+                    b.HasOne("LapAPI.Models.Quizzes", "Quizzes")
                         .WithMany()
                         .HasForeignKey("QuizId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LapAPI.Models.Topics", "topic")
+                    b.HasOne("LapAPI.Models.Topics", "Topics")
                         .WithMany()
                         .HasForeignKey("TopicId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("quiz");
+                    b.Navigation("Quizzes");
 
-                    b.Navigation("topic");
+                    b.Navigation("Topics");
                 });
 
             modelBuilder.Entity("LapAPI.Models.Notes", b =>
                 {
-                    b.HasOne("LapAPI.Models.Users", "user")
+                    b.HasOne("LapAPI.Models.Users", "Users")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("user");
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("LapAPI.Models.Questions", b =>
                 {
-                    b.HasOne("LapAPI.Models.Quizzes", "quiz")
+                    b.HasOne("LapAPI.Models.Quizzes", "Quizzes")
                         .WithMany("questions")
                         .HasForeignKey("QuizId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("quiz");
+                    b.Navigation("Quizzes");
                 });
 
             modelBuilder.Entity("LapAPI.Models.SubTopics", b =>
                 {
-                    b.HasOne("LapAPI.Models.Topics", "topic")
+                    b.HasOne("LapAPI.Models.Topics", "Topics")
                         .WithMany("SubTopics")
-                        .HasForeignKey("Id")
+                        .HasForeignKey("TopicsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("topic");
+                    b.Navigation("Topics");
                 });
 
             modelBuilder.Entity("LapAPI.Models.Quizzes", b =>

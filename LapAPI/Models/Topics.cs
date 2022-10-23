@@ -20,7 +20,6 @@ namespace LapAPI.Models
         [Required]
         public string Content { get; set; }
 
-        [ForeignKey("Id")]
         public ICollection<SubTopics> SubTopics { get; set; }
     }
 }

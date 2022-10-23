@@ -52,6 +52,12 @@ builder.Services.AddDbContext<LAPwiseDBContext>(
             builder.Configuration.GetConnectionString("DefaultConnection")
     ));
 
+// Handled Cycle Detection in Navigation Properties
+
+builder.Services.AddMvc().AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

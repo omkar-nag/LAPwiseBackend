@@ -106,17 +106,18 @@ namespace LapAPI.Migrations
                 name: "SubTopics",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TopicId = table.Column<int>(type: "int", nullable: false)
+                    TopicsId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SubTopics", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SubTopics_Topics_Id",
-                        column: x => x.Id,
+                        name: "FK_SubTopics_Topics_TopicsId",
+                        column: x => x.TopicsId,
                         principalTable: "Topics",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -199,6 +200,11 @@ namespace LapAPI.Migrations
                 name: "IX_Questions_QuizId",
                 table: "Questions",
                 column: "QuizId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubTopics_TopicsId",
+                table: "SubTopics",
+                column: "TopicsId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

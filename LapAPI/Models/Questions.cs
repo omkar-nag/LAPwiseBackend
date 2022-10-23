@@ -22,7 +22,7 @@ namespace LapAPI.Models
         [ForeignKey("Quizzes")]
         public int QuizId { get; set; }
 
-        public Quizzes quiz { get; set; }
+        public Quizzes Quizzes { get; set; }
         
     }
 }
