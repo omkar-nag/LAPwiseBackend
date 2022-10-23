@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using LapAPI.BusinessLayer.UserRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,6 +58,8 @@ builder.Services.AddDbContext<LAPwiseDBContext>(
 builder.Services.AddMvc().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
 );
+
+builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 
 var app = builder.Build();
 
