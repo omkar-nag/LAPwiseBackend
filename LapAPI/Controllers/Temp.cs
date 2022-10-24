@@ -18,10 +18,11 @@ namespace LapAPI.Controllers
 
         [HttpGet("{id}")]
         [Authorize]
-        public Quizzes GetSubTopicsForAllTopics()
+        public IActionResult GetSubTopicsForAllTopics()
         {
             System.Diagnostics.Debug.WriteLine(GetLoggedInUserId());
-            return new Quizzes();
+
+            return BadRequest(new { message = "Error" });
         }
     }
 }

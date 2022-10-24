@@ -20,6 +20,11 @@ namespace LapAPI.BusinessLayer.UserRepository
             return _dbContext.Users.Find(userId);
         }
 
+        public Users? GetUserByUserName(string userName)
+        {
+            return _dbContext.Users.Where(u => u.UserName == userName).SingleOrDefault();
+        }
+
         public Users? GetUserByUserNameAndPassword(AuthUserModel authUser)
         {
             var user = _dbContext.Users.FirstOrDefault(u => u.UserName == authUser.UserName & u.Password == authUser.Password);
@@ -30,14 +35,17 @@ namespace LapAPI.BusinessLayer.UserRepository
         public void Insert(Users user)
         {
             _dbContext.Users.Add(user);
+            this.Save();
         }
         public void Update(Users user)
         {
             _dbContext.Entry(user).State = EntityState.Modified;
+            this.Save();
         }
         public void Delete(int userId)
         {
             _dbContext.Users.Remove(this.GetById(userId));
+            this.Save();
         }
         public void Save()
         {

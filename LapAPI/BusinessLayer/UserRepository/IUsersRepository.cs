@@ -6,6 +6,7 @@ namespace LapAPI.BusinessLayer.UserRepository
     {
         IEnumerable<Users> GetAll();
         Users? GetById(int userId);
+        Users? GetUserByUserName(string userName);
         Users? GetUserByUserNameAndPassword(AuthUserModel authUser);
         void Insert(Users user);
         void Update(Users user);
