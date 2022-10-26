@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using LapAPI.BusinessLayer.UserRepository;
 using LapAPI.BusinessLayer.NotesRepository;
+using LapAPI.BusinessLayer.AssessmentsRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,6 +63,7 @@ builder.Services.AddMvc().AddNewtonsoftJson(options =>
 
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<INotesRepository, NotesRepository>();
+builder.Services.AddScoped<IAssessmentsRepository, AssessmentsRepository>();
 
 
 var app = builder.Build();

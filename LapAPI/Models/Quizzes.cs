@@ -16,6 +16,8 @@ namespace LapAPI.Models
         [Required]
         public string Title { get; set; }
 
+        public int QuestionCount { get; set; }
+
         public ICollection<Questions> questions { get; set; }
     }
 }

@@ -6,7 +6,9 @@ namespace LapAPI.BusinessLayer.UserRepository
 {
     public class UsersRepository : IUsersRepository
     {
+
         private readonly LAPwiseDBContext _dbContext;
+
         public UsersRepository(LAPwiseDBContext context)
         {
             _dbContext = context;
@@ -31,21 +33,26 @@ namespace LapAPI.BusinessLayer.UserRepository
             return user;
         }
 
-
-        public void Insert(Users user)
+        public Users Insert(Users user)
         {
             _dbContext.Users.Add(user);
             this.Save();
+            return user;
         }
-        public void Update(Users user)
+        public Users Update(Users user)
         {
             _dbContext.Entry(user).State = EntityState.Modified;
             this.Save();
+            return user;
         }
         public void Delete(int userId)
         {
-            _dbContext.Users.Remove(this.GetById(userId));
-            this.Save();
+            Users? user = this.GetById(userId);
+            if (user != null)
+            {
+                _dbContext.Users.Remove(user);
+                this.Save();
+            }
         }
         public void Save()
         {
