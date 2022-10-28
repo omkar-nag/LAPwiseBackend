@@ -2,14 +2,19 @@
 using LapAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace LapAPI.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
     public class TempController : CustomControllerBase
     {
         private readonly LAPwiseDBContext _context;
+
+        
+        
 
         public TempController(LAPwiseDBContext context)
         {
@@ -17,12 +22,31 @@ namespace LapAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize]
-        public IActionResult GetSubTopicsForAllTopics()
+        //[Authorize]
+        public IActionResult GetSubTopicsForAllTopics(int userId)
         {
-            System.Diagnostics.Debug.WriteLine(GetLoggedInUserId());
+            //System.Diagnostics.Debug.WriteLine(GetLoggedInUserId());
+            //Thread.Sleep(5000);
 
-            return BadRequest(new { message = "Error" });
+            var output = _context.AssessmentResults
+                 .Join(_context.Assessments, x => x.AssessmentId, y => y.Id, (ar, a) => new { ar, a })
+                 .Where(obj => obj.ar.UserId == userId);
+                 //.OrderByDescending(obj => obj.ar.Score)
+                 //.Select(obj => new CustomAssessment
+                 //    { 
+                 //        AssessmentId = obj.ar.AssessmentId, 
+                 //        Title = obj.a.Title,
+                 //        QuizId = obj.a.QuizId,
+                 //        Topic = obj.a.Topics,
+                 //        Score = obj.ar.Score
+                 //    }
+                 //).ToList();
+            foreach(var topic in output)
+            {
+                Console.WriteLine(topic.ar.AssessmentId);
+            }
+            return Ok(output);
+            
         }
     }
 }
