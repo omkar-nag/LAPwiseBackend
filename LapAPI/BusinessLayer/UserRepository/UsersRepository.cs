@@ -1,6 +1,8 @@
-﻿using LapAPI.DataAccessLayer;
+﻿using LapAPI.BusinessLayer.NotesRepository;
+using LapAPI.DataAccessLayer;
 using LapAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace LapAPI.BusinessLayer.UserRepository
 {
@@ -17,9 +19,11 @@ namespace LapAPI.BusinessLayer.UserRepository
         {
             return _dbContext.Users.ToList();
         }
-        public Users? GetById(int userId)
+        public async Task<Users> GetById(int userId)
         {
-            return _dbContext.Users.Find(userId);
+            var users = await _dbContext.Users.FindAsync(userId);
+
+            return users;
         }
 
         public Users? GetUserByUserName(string userName)
@@ -39,15 +43,37 @@ namespace LapAPI.BusinessLayer.UserRepository
             this.Save();
             return user;
         }
-        public Users Update(Users user)
+        public async Task<Users>Update(int id,Users user)
         {
+            
+            if (id != user.Id)
+            {
+                throw new ItemUpdateException();
+            }
+
             _dbContext.Entry(user).State = EntityState.Modified;
-            this.Save();
-            return user;
+
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UserExists(id))
+                {
+                    throw new ItemNotFoundException();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return await Task.FromResult<Users>(null);
+
         }
-        public void Delete(int userId)
+        public async void Delete(int userId)
         {
-            Users? user = this.GetById(userId);
+            Users? user =await this.GetById(userId);
             if (user != null)
             {
                 _dbContext.Users.Remove(user);
@@ -57,6 +83,11 @@ namespace LapAPI.BusinessLayer.UserRepository
         public void Save()
         {
             _dbContext.SaveChanges();
+        }
+
+        private bool UserExists(int id)
+        {
+            return _dbContext.Users.Any(user => user.Id == id);
         }
     }
 }
