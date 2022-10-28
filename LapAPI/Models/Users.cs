@@ -6,7 +6,7 @@ namespace LapAPI.Models
     public class Users
     {
         [Key]
-        public int Id { get; set; }
+        public  int Id { get; set; }
 
         [Required]
         public string FirstName { get; set; }
