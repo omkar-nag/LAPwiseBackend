@@ -6,6 +6,7 @@ using System.Text;
 using LapAPI.BusinessLayer.UserRepository;
 using LapAPI.BusinessLayer.NotesRepository;
 using LapAPI.BusinessLayer.AssessmentsRepository;
+using LapAPI.BusinessLayer.QuizRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,6 +65,7 @@ builder.Services.AddMvc().AddNewtonsoftJson(options =>
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<INotesRepository, NotesRepository>();
 builder.Services.AddScoped<IAssessmentsRepository, AssessmentsRepository>();
+builder.Services.AddScoped<IQuizRepository, QuizRepository>();
 
 
 var app = builder.Build();

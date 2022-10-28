@@ -20,9 +20,9 @@ namespace LapAPI.Models
         public int UserId { get; set; }
 
 
-        public Users Users { get; set; }
+        public Users? Users { get; set; }
 
-        public Assessments Assessments { get; set; }
+        public Assessments? Assessments { get; set; }
 
     }
 }

@@ -7,7 +7,7 @@ namespace LapAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class NotesController : ControllerBase
     {
         private INotesRepository _repository;
@@ -42,17 +42,17 @@ namespace LapAPI.Controllers
         // PUT: api/Notes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutNotes(int id, Notes notes)
+        public async Task<IActionResult> PutNotes(int userId, [FromBody] ICollection<Notes> notes)
         {
             try
             {
-                var updateStatus = await _repository.PutNotes(id, notes);
+                var updateStatus = await _repository.PutNotes(userId, notes);
             }
             catch (ItemUpdateException)
             {
                 return BadRequest();
             }
-            return NoContent();
+            return Ok(notes);
         }
 
         // POST: api/Notes
@@ -60,7 +60,13 @@ namespace LapAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> PostNotes([FromBody]Notes notes)
         {
-            await _repository.PostNotes(notes);
+            var x = new Notes();
+            x.Content = notes.Content;
+            x.UserId = notes.UserId;
+            x.Title = notes.Title;
+            
+
+            await _repository.PostNotes(x);
 
             return CreatedAtAction("GetNotes", new { id = notes.Id }, notes);
         }
@@ -78,7 +84,7 @@ namespace LapAPI.Controllers
             {
                 return NotFound();
             }
-            return NoContent();
+            return Ok();
         }
 
     }
