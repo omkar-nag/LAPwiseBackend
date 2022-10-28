@@ -2,6 +2,7 @@
 using LapAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol.Core.Types;
 
 namespace LapAPI.Controllers
 {
@@ -24,5 +25,13 @@ namespace LapAPI.Controllers
 
             return BadRequest(new { message = "Error" });
         }
+
+        //[HttpPut("{id}")]
+        //public IActionResult Update(int id, [FromBody] Users users)
+        //{
+        //    _context.Users.Update(users);
+        //    _context.SaveChanges();
+        //    return NoContent();
+        //}
     }
 }

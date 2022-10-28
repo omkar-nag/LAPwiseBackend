@@ -9,7 +9,7 @@ namespace LapAPI.BusinessLayer.UserRepository
         Users? GetUserByUserName(string userName);
         Users? GetUserByUserNameAndPassword(AuthUserModel authUser);
         Users Insert(Users user);
-        Users Update(Users user);
+        Task<Users> Update(int id,Users user);
         void Delete(int userId);
         void Save();
     }

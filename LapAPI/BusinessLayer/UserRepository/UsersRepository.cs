@@ -1,6 +1,8 @@
-﻿using LapAPI.DataAccessLayer;
+﻿using LapAPI.BusinessLayer.NotesRepository;
+using LapAPI.DataAccessLayer;
 using LapAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace LapAPI.BusinessLayer.UserRepository
 {
@@ -39,11 +41,33 @@ namespace LapAPI.BusinessLayer.UserRepository
             this.Save();
             return user;
         }
-        public Users Update(Users user)
+        public async Task<Users>Update(int id,Users user)
         {
+            
+            if (id != user.Id)
+            {
+                throw new ItemUpdateException();
+            }
+
             _dbContext.Entry(user).State = EntityState.Modified;
-            this.Save();
-            return user;
+
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UserExists(id))
+                {
+                    throw new ItemNotFoundException();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return await Task.FromResult<Users>(null);
+
         }
         public void Delete(int userId)
         {
@@ -57,6 +81,11 @@ namespace LapAPI.BusinessLayer.UserRepository
         public void Save()
         {
             _dbContext.SaveChanges();
+        }
+
+        private bool UserExists(int id)
+        {
+            return _dbContext.Users.Any(user => user.Id == id);
         }
     }
 }
