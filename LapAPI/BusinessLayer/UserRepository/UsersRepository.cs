@@ -19,9 +19,11 @@ namespace LapAPI.BusinessLayer.UserRepository
         {
             return _dbContext.Users.ToList();
         }
-        public Users? GetById(int userId)
+        public async Task<Users> GetById(int userId)
         {
-            return _dbContext.Users.Find(userId);
+            var users = await _dbContext.Users.FindAsync(userId);
+
+            return users;
         }
 
         public Users? GetUserByUserName(string userName)
@@ -69,9 +71,9 @@ namespace LapAPI.BusinessLayer.UserRepository
             return await Task.FromResult<Users>(null);
 
         }
-        public void Delete(int userId)
+        public async void Delete(int userId)
         {
-            Users? user = this.GetById(userId);
+            Users? user =await this.GetById(userId);
             if (user != null)
             {
                 _dbContext.Users.Remove(user);

@@ -5,6 +5,7 @@ using LapAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using LapAPI.BusinessLayer.NotesRepository;
+using NuGet.Protocol.Core.Types;
 
 namespace LapAPI.Controllers
 {
@@ -22,7 +23,7 @@ namespace LapAPI.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser([FromRoute]int id, [FromBody] Users user)
+        public async Task<IActionResult> PutUser([FromRoute] int id, [FromBody] Users user)
         {
             try
             {
@@ -33,6 +34,12 @@ namespace LapAPI.Controllers
                 return BadRequest();
             }
             return NoContent();
+        }
+
+        [HttpGet("{id}")]
+        public async Task<Users> GetUser([FromRoute] int id)
+        {
+            return await _usersRepository.GetById(id);
         }
     }
 }
