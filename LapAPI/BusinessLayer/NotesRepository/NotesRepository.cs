@@ -43,31 +43,19 @@ namespace LapAPI.BusinessLayer.NotesRepository
             return notes;
         }
 
-        public async Task<Notes> PutNotes(int id, Notes notes)
+        public async Task<ICollection<Notes>> PutNotes(int userId, ICollection<Notes> notes)
         {
-            if (id != notes.Id)
+            
+            foreach (var note in notes)
             {
-                throw new ItemUpdateException();
-            }
+                _context.Attach(note);
+                var n = _context.Notes.Update(note);
+                _context.Entry(note).State = EntityState.Modified;
 
-            _context.Entry(notes).State = EntityState.Modified;
-
-            try
-            {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!NotesExists(id))
-                {
-                    throw new ItemNotFoundException();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-            return await Task.FromResult<Notes>(null);
+
+            return await Task.FromResult<ICollection<Notes>>(notes);
 
         }
 
@@ -77,7 +65,7 @@ namespace LapAPI.BusinessLayer.NotesRepository
             _context.Notes.Add(notes);
             await _context.SaveChangesAsync();
 
-            return await Task.FromResult<Notes>(null);
+            return await Task.FromResult<Notes>(notes);
         }
 
         public async Task<Notes> DeleteNotes(int id)
