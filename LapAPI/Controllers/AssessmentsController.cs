@@ -35,12 +35,17 @@ namespace LapAPI.Controllers
         }
 
         [HttpPost("quiz/result")]
-        public async Task<IActionResult> InsertAssessmentResult([FromBody] AssessmentResults result)
+        public async Task<IActionResult> InsertAssessmentResultAsync([FromBody] AssessmentResults result)
         {
-            System.Diagnostics.Debug.WriteLine("---------------------------\n\n");
-            System.Diagnostics.Debug.WriteLine(result.ToString());
             await _quizRepository.InsertAssessmentResult(result);
             return Ok(new { message = "Success" });
+        }
+
+
+        [HttpGet("previous-results")]
+        public async Task<IEnumerable<AssessmentResults>> GetPreviousResultsAsync()
+        {
+            return await _assessmentsRepository.GetAssessmentResultsAsync(GetLoggedInUserId());
         }
 
     }

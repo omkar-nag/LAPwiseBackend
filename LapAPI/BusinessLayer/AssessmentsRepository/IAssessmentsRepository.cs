@@ -6,6 +6,7 @@ namespace LapAPI.BusinessLayer.AssessmentsRepository
     {
         Task<IEnumerable<Assessments>> GetAll();
         Task<IEnumerable<CustomAssessment>> GetCustomAssessmentsAsync(int userId);
+        Task<IEnumerable<AssessmentResults>> GetAssessmentResultsAsync(int userId);
         Task<Assessments?> GetById(int Id);
         Task<Assessments> Insert(Assessments assessment);
         Task<Assessments> Update(Assessments assessment);
