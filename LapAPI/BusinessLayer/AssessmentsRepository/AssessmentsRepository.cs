@@ -58,6 +58,7 @@ namespace LapAPI.BusinessLayer.AssessmentsRepository
                     .ThenInclude(a => a.Quizzes)
                 .Include(a => a.Assessments)
                     .ThenInclude(a => a.Topics)
+                .OrderByDescending(a => a.CreatedAt)
                 .ToListAsync();
         }
 
