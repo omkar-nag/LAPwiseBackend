@@ -51,6 +51,17 @@ namespace LapAPI.BusinessLayer.AssessmentsRepository
             return await Task.FromResult(assessments);
         }
 
+        public async Task<IEnumerable<AssessmentResults>> GetAssessmentResultsAsync(int userId)
+        {
+            return await _dbContext.AssessmentResults.Where(ar => ar.UserId == userId)
+                .Include(ar => ar.Assessments)
+                    .ThenInclude(a => a.Quizzes)
+                .Include(a => a.Assessments)
+                    .ThenInclude(a => a.Topics)
+                .OrderByDescending(a => a.CreatedAt)
+                .ToListAsync();
+        }
+
         public async Task<Assessments?> GetById(int Id)
         {
             return await _dbContext.Assessments.FindAsync(Id);

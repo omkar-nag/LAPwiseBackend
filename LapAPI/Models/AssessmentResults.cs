@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using NuGet.Packaging.Signing;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LapAPI.Models
@@ -19,6 +20,7 @@ namespace LapAPI.Models
         [ForeignKey("Users")]
         public int UserId { get; set; }
 
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public Users? Users { get; set; }
 
