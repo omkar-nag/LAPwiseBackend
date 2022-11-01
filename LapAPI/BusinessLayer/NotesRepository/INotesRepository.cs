@@ -8,9 +8,9 @@ namespace LapAPI.BusinessLayer.NotesRepository
     {
         Task<List<Notes>> GetNotesByUserId(int userId);
         Task<Notes> GetNotes(int id);
-        Task<ICollection<Notes>> PutNotes(int userId,ICollection<Notes> notes);
+        Task<ActionResult<List<Notes>>> PutNotes(int userId,ICollection<Notes> notes);
 
-        Task<Notes> PostNotes(Notes notes);
+        Task<ActionResult<List<Notes>>> PostNotes(Notes notes);
         Task<Notes> DeleteNotes(int id);
 
     }

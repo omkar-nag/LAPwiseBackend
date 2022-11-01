@@ -39,36 +39,38 @@ namespace LapAPI.Controllers
             return notes;
         }
 
+
         // PUT: api/Notes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutNotes(int userId, [FromBody] ICollection<Notes> notes)
+        [HttpPut("{userId}")]
+        public async Task<ActionResult<List<Notes>>> PutNotes(int userId, [FromBody] ICollection<Notes> notes)
         {
+            ActionResult<List<Notes>> myNotes;
             try
             {
-                var updateStatus = await _repository.PutNotes(userId, notes);
+                 myNotes = await _repository.PutNotes(userId, notes);
             }
             catch (ItemUpdateException)
             {
                 return BadRequest();
             }
-            return Ok(notes);
+            return myNotes;
         }
 
         // POST: api/Notes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<IActionResult> PostNotes([FromBody]Notes notes)
+        public async Task<ActionResult<List<Notes>>> PostNotes([FromBody]Notes notes)
         {
             var x = new Notes();
             x.Content = notes.Content;
             x.UserId = notes.UserId;
             x.Title = notes.Title;
-            
+            ActionResult<List<Notes>> myNotes;
 
-            await _repository.PostNotes(x);
+            myNotes = await _repository.PostNotes(x);
+            return myNotes;
 
-            return CreatedAtAction("GetNotes", new { id = notes.Id }, notes);
         }
 
         // DELETE: api/Notes/5

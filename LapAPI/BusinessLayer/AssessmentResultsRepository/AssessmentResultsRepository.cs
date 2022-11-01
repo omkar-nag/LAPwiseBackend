@@ -1,4 +1,4 @@
-﻿namespace LapAPI.BusinessLayer.AssessmentResults
+﻿namespace LapAPI.BusinessLayer.AssessmentResultsRepository
 {
     public class AssessmentResultsRepository
     {
