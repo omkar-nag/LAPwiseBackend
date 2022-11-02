@@ -30,59 +30,37 @@ namespace LapAPI.BusinessLayer.NotesRepository
             _context = context;
         }
 
-        public async Task<Notes> GetNotes(int id)
-        {
-            var notes = await _context.Notes.FindAsync(id);
-
-            return notes;
-        }
-
         public async Task<List<Notes>> GetNotesByUserId(int userId)
         {
-            var notes = await  _context.Notes.Where(note => note.UserId == userId).ToListAsync();
+            var notes = await _context.Notes.Where(note => note.UserId == userId).ToListAsync();
+
             return notes;
         }
 
-        public async Task<ActionResult<List<Notes>>> PutNotes(int userId, ICollection<Notes> notes)
+        public Notes PutNotes(Notes note)
         {
-
-            foreach (var note in notes)
+            if (note.Id < 0)
             {
-                if (note.Id == -1)
+                Notes curr = new Notes
                 {
-                    Notes curr = new Notes
-                    {
-                        Content = note.Content,
-                        Title = note.Title,
-                        UserId = note.UserId
-                    };
-                    _context.Notes.Add(curr);
-                    await _context.SaveChangesAsync();
-                    continue;
-                }
-                _context.Attach(note);
-                var n = _context.Notes.Update(note);
-                _context.Entry(note).State = EntityState.Modified;
+                    Content = note.Content,
+                    Title = note.Title,
+                    UserId = note.UserId
+                };
+                _context.Notes.Add(curr);
 
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
+
+                return curr;
             }
-            List<Notes> myNotes = new List<Notes>();
-            myNotes = _context.Notes.Where(note => note.UserId == userId).ToList();
+            _context.Attach(note);
 
-            return await Task.FromResult<List<Notes>>(myNotes);
+            _context.Entry(note).State = EntityState.Modified;
 
-        }
+            _context.SaveChanges();
 
+            return note;
 
-        public async Task<ActionResult<List<Notes>>> PostNotes(Notes notes)
-        {
-            _context.Notes.Add(notes);
-            await _context.SaveChangesAsync();
-
-            List<Notes> myNotes = new List<Notes>();
-            myNotes = _context.Notes.Where(note => note.UserId == notes.UserId).ToList();
-
-            return await Task.FromResult<List<Notes>>(myNotes);
         }
 
         public async Task<Notes> DeleteNotes(int id)
@@ -90,7 +68,9 @@ namespace LapAPI.BusinessLayer.NotesRepository
             var notes = await _context.Notes.FindAsync(id);
             if (notes == null)
             {
+
                 throw new ItemNotFoundException();
+
             }
 
             _context.Notes.Remove(notes);
@@ -100,9 +80,5 @@ namespace LapAPI.BusinessLayer.NotesRepository
         }
 
 
-        private bool NotesExists(int id)
-        {
-            return _context.Notes.Any(note => note.Id == id);
-        }
     }
 }
