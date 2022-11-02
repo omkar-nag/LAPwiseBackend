@@ -33,8 +33,9 @@ namespace LapAPI.BusinessLayer.UserRepository
 
         public Users? GetUserByUserNameAndPassword(AuthUserModel authUser)
         {
-            var user = _dbContext.Users.FirstOrDefault(u => u.UserName == authUser.UserName & u.Password == authUser.Password);
-            return user;
+            var user = _dbContext.Users.FirstOrDefault(u => u.UserName == authUser.UserName);
+
+            return BCrypt.Net.BCrypt.Verify(authUser.Password, user.Password) ? user : null;
         }
 
         public Users Insert(Users user)
@@ -43,9 +44,9 @@ namespace LapAPI.BusinessLayer.UserRepository
             this.Save();
             return user;
         }
-        public async Task<Users>Update(int id,Users user)
+        public async Task<Users> Update(int id, Users user)
         {
-            
+
             if (id != user.Id)
             {
                 throw new ItemUpdateException();
@@ -73,7 +74,7 @@ namespace LapAPI.BusinessLayer.UserRepository
         }
         public async void Delete(int userId)
         {
-            Users? user =await this.GetById(userId);
+            Users? user = await this.GetById(userId);
             if (user != null)
             {
                 _dbContext.Users.Remove(user);
