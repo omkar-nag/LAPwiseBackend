@@ -79,6 +79,8 @@ namespace LapAPI.Controllers
                 return Conflict(new { message = "Username already exists! Please try with a different username." });
             }
 
+            requestUser.Password = BCrypt.Net.BCrypt.HashPassword(requestUser.Password);
+
             user = createUser(requestUser);
 
             return Ok(new { message = "Registration successful!" });
