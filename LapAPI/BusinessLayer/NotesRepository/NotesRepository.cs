@@ -2,6 +2,7 @@
 using LapAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace LapAPI.BusinessLayer.NotesRepository
 {
@@ -24,7 +25,7 @@ namespace LapAPI.BusinessLayer.NotesRepository
 
     public class NotesRepository : INotesRepository
     {
-        private LAPwiseDBContext _context;
+        private readonly LAPwiseDBContext _context;
         public NotesRepository(LAPwiseDBContext context)
         {
             _context = context;
@@ -32,53 +33,102 @@ namespace LapAPI.BusinessLayer.NotesRepository
 
         public async Task<List<Notes>> GetNotesByUserId(int userId)
         {
-            var notes = await _context.Notes.Where(note => note.UserId == userId).ToListAsync();
 
-            return notes;
+            try
+            {
+                var notes = await _context.Notes.Where(note => note.UserId == userId).ToListAsync();
+
+                return notes;
+            }
+            catch (ItemNotFoundException ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public Notes PostNotes(Notes note)
+        {
+            if (note.Id > 0)
+            {
+                throw new InvalidOperationException();
+            }
+            try
+            {
+                Notes postedNote = new Notes
+                {
+                    Title = note.Title,
+                    Content = note.Content,
+                    UserId = note.UserId,
+                };
+
+                _context.Notes.Add(postedNote);
+
+                _context.SaveChanges();
+
+                return postedNote;
+            }
+            catch(DbUpdateException ex)
+            {
+                throw ex;
+            }
         }
 
         public Notes PutNotes(Notes note)
         {
-            if (note.Id < 0)
+            if (!NoteExists(note.Id))
             {
-                Notes curr = new Notes
-                {
-                    Content = note.Content,
-                    Title = note.Title,
-                    UserId = note.UserId
-                };
-                _context.Notes.Add(curr);
+                throw new ItemNotFoundException($"Note with ID = {note.Id} and Title = '{note.Title}' does not exist");
+            }
+
+            try
+            {
+                _context.Attach(note);
+
+                _context.Entry(note).State = EntityState.Modified;
 
                 _context.SaveChanges();
 
-                return curr;
+                return note;
             }
-            _context.Attach(note);
+            catch (DbUpdateException ex)
+            {
 
-            _context.Entry(note).State = EntityState.Modified;
+                throw ex;
 
-            _context.SaveChanges();
-
-            return note;
-
+            }
         }
 
         public async Task<Notes> DeleteNotes(int id)
         {
-            var notes = await _context.Notes.FindAsync(id);
-            if (notes == null)
+            if (!NoteExists(id))
             {
 
                 throw new ItemNotFoundException();
 
             }
+            try
+            {
+                var notes = await _context.Notes.FindAsync(id);
 
-            _context.Notes.Remove(notes);
-            await _context.SaveChangesAsync();
+                _context.Notes.Remove(notes);
+                
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+
+                throw ex;
+
+            }
 
             return await Task.FromResult<Notes>(null);
         }
 
+        public bool NoteExists(int id)
+        {
+            return _context.Notes.Where((note) => note.Id == id).Any();
+        }
 
     }
 }
