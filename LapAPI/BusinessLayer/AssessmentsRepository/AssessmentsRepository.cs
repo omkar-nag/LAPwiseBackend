@@ -30,23 +30,9 @@ namespace LapAPI.BusinessLayer.AssessmentsRepository
                 assessments.Add(new CustomAssessment
                 {
                     Assessment = item,
-                    Score = bestResult != null ? bestResult.Score : 0,
+                    Score = bestResult != null ? bestResult.Score : null,
                 });
             }
-
-            //var query = from a in _dbContext.Set<Assessments>()
-            //            join b in _dbContext.Set<AssessmentResults>()
-            //                on a.Id equals b.AssessmentId into grouping
-
-            //            from p in grouping.DefaultIfEmpty()
-            //            select new CustomAssessment
-            //            {
-            //                AssessmentId = a.Id,
-            //                Title = a.Title,
-            //                QuizId = a.QuizId,
-            //                Topic = a.Topics,
-            //                Score = p == null ? 0 : p.Score 
-            //            };
 
             return await Task.FromResult(assessments);
         }

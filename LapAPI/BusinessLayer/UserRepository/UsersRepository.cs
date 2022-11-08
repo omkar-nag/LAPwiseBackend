@@ -19,7 +19,7 @@ namespace LapAPI.BusinessLayer.UserRepository
         {
             return _dbContext.Users.ToList();
         }
-        public async Task<Users> GetById(int userId)
+        public async Task<Users?> GetById(int userId)
         {
             var users = await _dbContext.Users.FindAsync(userId);
 
@@ -29,13 +29,25 @@ namespace LapAPI.BusinessLayer.UserRepository
         public Users? GetUserByUserName(string userName)
         {
             return _dbContext.Users.Where(u => u.UserName == userName).SingleOrDefault();
+
         }
 
         public Users? GetUserByUserNameAndPassword(AuthUserModel authUser)
         {
-            var user = _dbContext.Users.FirstOrDefault(u => u.UserName == authUser.UserName);
+            try
+            {
+                var user = _dbContext.Users.First(u => u.UserName == authUser.UserName);
 
-            return BCrypt.Net.BCrypt.Verify(authUser.Password, user.Password) ? user : null;
+                return BCrypt.Net.BCrypt.Verify(authUser.Password, user.Password) ? user : null;
+            }
+            catch (InvalidOperationException)
+            {
+
+                System.Diagnostics.Debug.WriteLine("User does not exist!");
+
+                return null;
+            }
+
         }
 
         public Users Insert(Users user)

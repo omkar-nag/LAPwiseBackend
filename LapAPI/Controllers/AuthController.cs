@@ -22,20 +22,28 @@ namespace LapAPI.Controllers
             _usersRepository = usersRepository;
         }
 
-        private Users isValidUser(AuthUserModel authUser)
+        private Users? getValidUser(AuthUserModel authUser)
         {
             return this._usersRepository.GetUserByUserNameAndPassword(authUser);
         }
 
-        private Users isExistingUser(string userName)
+        private bool isExistingUser(string userName)
         {
-            return this._usersRepository.GetUserByUserName(userName);
+            return this._usersRepository.GetUserByUserName(userName) != null;
         }
 
-        private Users createUser(Users user)
+        private Users? createUser(Users user)
         {
-            _usersRepository.Insert(user);
-            return user;
+            try
+            {
+                _usersRepository.Insert(user);
+                return user;
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.ToString());
+            }
+            return null;
         }
 
         [HttpPost("login")]
@@ -43,7 +51,7 @@ namespace LapAPI.Controllers
         {
             if (authUser == null) return BadRequest("Invalid User");
 
-            var user = isValidUser(authUser);
+            var user = getValidUser(authUser);
 
             if (user == null) return Unauthorized();
 
@@ -73,17 +81,19 @@ namespace LapAPI.Controllers
         [HttpPost("signup")]
         public IActionResult SignUp([FromBody] Users requestUser)
         {
-            Users user = this.isExistingUser(requestUser.UserName);
-            if (user != null)
+
+            if (this.isExistingUser(requestUser.UserName))
             {
                 return Conflict(new { message = "Username already exists! Please try with a different username." });
             }
 
             requestUser.Password = BCrypt.Net.BCrypt.HashPassword(requestUser.Password);
 
-            user = createUser(requestUser);
+            Users? user = createUser(requestUser);
 
-            return Ok(new { message = "Registration successful!" });
+            if (user != null) return Ok(new { message = "Registration successful!" });
+
+            return BadRequest();
         }
 
     }

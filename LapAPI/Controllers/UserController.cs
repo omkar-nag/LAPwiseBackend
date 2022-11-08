@@ -11,8 +11,8 @@ namespace LapAPI.Controllers
 {
     public class PasswordObject
     {
-        public string OldPassword { get; set; }
-        public string NewPassword { get; set; }
+        public string? OldPassword { get; set; }
+        public string? NewPassword { get; set; }
     }
 
 
@@ -44,7 +44,9 @@ namespace LapAPI.Controllers
         [HttpPut("update-password")]
         public async Task<IActionResult> UpdatePassword([FromBody] PasswordObject passwordObj)
         {
-            Users user = await _usersRepository.GetById(GetLoggedInUserId());
+            Users? user = await _usersRepository.GetById(GetLoggedInUserId());
+
+            if (user == null) return BadRequest();
 
             bool isValid = BCrypt.Net.BCrypt.Verify(passwordObj.OldPassword, user.Password);
 
@@ -58,7 +60,7 @@ namespace LapAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<Users> GetUser([FromRoute] int id)
+        public async Task<Users?> GetUser([FromRoute] int id)
         {
             return await _usersRepository.GetById(id);
         }

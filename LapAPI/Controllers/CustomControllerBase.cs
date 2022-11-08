@@ -11,12 +11,22 @@ namespace LapAPI.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         public int GetLoggedInUserId()
         {
-            if (!User.Identity.IsAuthenticated)
-                throw new AuthenticationException();
+            string userId;
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                try
+                {
+                    userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+                }
+                catch (ArgumentNullException)
+                {
+                    userId = "-1";
+                }
 
-            string userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+                return int.Parse(userId);
+            }
 
-            return int.Parse(userId);
+            throw new AuthenticationException();
         }
     }
 }
