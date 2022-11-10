@@ -5,7 +5,7 @@ namespace LapAPI.BusinessLayer.UserRepository
     public interface IUsersRepository
     {
         IEnumerable<Users> GetAll();
-        Task<Users?> GetById(int userId);
+        Users? GetById(int userId);
         Users? GetUserByUserName(string userName);
         Users? GetUserByUserNameAndPassword(AuthUserModel authUser);
         Users Insert(Users user);
