@@ -19,13 +19,13 @@ namespace LapAPI.BusinessLayer.UserRepository
         {
             return _dbContext.Users.ToList();
         }
-        public Users? GetById(int userId)
+        public async Task<Users> GetById(int userId)
         {
             if (!UserExists(userId))
             {
                 throw new ItemNotFoundException();
             }
-            var users =  _dbContext.Users.Find(userId);
+            var users = await _dbContext.Users.FindAsync(userId);
 
             return users;
         }
@@ -85,12 +85,12 @@ namespace LapAPI.BusinessLayer.UserRepository
                     throw;
                 }
             }
-            return await Task.FromResult<Users>(null);
+            return await Task.FromResult<Users>(user);
 
         }
         public async void Delete(int userId)
         {
-            Users? user = this.GetById(userId);
+            Users? user = await this.GetById(userId);
             if (user != null)
             {
                 _dbContext.Users.Remove(user);

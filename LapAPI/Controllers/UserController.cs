@@ -28,11 +28,11 @@ namespace LapAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult PutUser([FromRoute] int id, [FromBody] Users user)
+        public async Task<IActionResult> PutUser([FromRoute] int id, [FromBody] Users user)
         {
             try
             {
-                var updateStatus =  _usersRepository.Update(id, user);
+                var updateStatus = await  _usersRepository.Update(id, user);
             }
             catch (ItemUpdateException)
             {
@@ -44,7 +44,7 @@ namespace LapAPI.Controllers
         [HttpPut("update-password")]
         public async Task<IActionResult> UpdatePassword([FromBody] PasswordObject passwordObj)
         {
-            Users? user =  _usersRepository.GetById(GetLoggedInUserId());
+            Users? user =  await _usersRepository.GetById(GetLoggedInUserId());
 
             if (user == null) return BadRequest();
 
@@ -60,11 +60,11 @@ namespace LapAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public Users? GetUser([FromRoute] int id)
+        public async Task<Users?> GetUser([FromRoute] int id)
         {
             try
             {
-                return  _usersRepository.GetById(id);
+                return await  _usersRepository.GetById(id);
             }
             catch (ItemUpdateException)
             {

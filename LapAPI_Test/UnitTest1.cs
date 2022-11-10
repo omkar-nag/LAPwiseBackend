@@ -1,33 +1,28 @@
-using Moq;
+using System.Xml.Serialization;
+using LapAPI.BusinessLayer.NotesRepository;
+using LapAPI.BusinessLayer.UserRepository;
 using LapAPI.Controllers;
 using LapAPI.Models;
-using LapAPI.BusinessLayer.UserRepository;
-using NuGet.Protocol.Core.Types;
-using Microsoft.EntityFrameworkCore;
-using Xunit;
-
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 
-namespace LapAPI_Test
+namespace Profile_Test
 {
     public class UnitTest1
     {
+        //Backup
         private readonly Mock<IUsersRepository> UserRep;
-
         public UnitTest1()
         {
             UserRep = new Mock<IUsersRepository>();
-
-
         }
         [Fact]
 
         public void GetByID_Success()
         {
             //arrange
-            var usersData = GetUsersData();
-            UserRep.Setup(x => x.GetById(1)).Returns(usersData[0]);
+            var usersData = GetUserssData();
+            UserRep.Setup(x => x.GetById(1)).ReturnsAsync(usersData[0]);
             var userController = new UserController(UserRep.Object);
 
             //act
@@ -39,14 +34,13 @@ namespace LapAPI_Test
             Assert.Equal(usersData[0].Id, productResult.Id);
             Assert.True(usersData[0].Id == productResult.Id);
         }
-
         [Fact]
         public void GetByID_Failure()
         {
             //arrange
-            var usersData = Userdata();
+            var usersData = GetUserssData();
             Users x = null;
-            UserRep.Setup(x => x.GetById(2)).Returns(x);
+            UserRep.Setup(x => x.GetById(2)).ReturnsAsync(x);
             var userController = new UserController(UserRep.Object);
 
             //act
@@ -54,59 +48,73 @@ namespace LapAPI_Test
 
 
             //assert
-            Assert.Null(productResult);
-
+            Assert.Null(productResult.Result);
         }
-
-        private List<Users> GetUsersData()
-        {
-            List<Users> usersData = new List<Users>
-            {
-                new Users
-                {
-                    Id = 1,
-                    FirstName = "Vinita",
-                    LastName = "Abburi",
-                    Email = "vinitaabburi222@gmail.com",
-                    Password = "Vinni@1234",
-                    UserName = "Vinni"
-                },
-
-            }; return usersData;
-        }
-
         [Fact]
-        private void Update()
+
+        public void Update_Success()
         {
-            var userData = Userdata();
-            UserRep.Setup(x => x.Update(1, userData)).ReturnsAsync(userData);
+            Users user = new Users();
+            user.Id = 1;
+            user.FirstName = "Vinita";
+            user.LastName = "Abburi";
+            user.Email = "vinitaabburi222@gmail.com";
+            user.Password = "Vinni@1234";
+            user.UserName = "Vinni";
+            UserRep.Setup(x => x.Update(1, user)).ReturnsAsync(user);
             var userController = new UserController(UserRep.Object);
 
             //act
-            var productResult = userController.PutUser(1, userData);
+            var productResult = userController.PutUser(1, user);
 
 
-            Assert.IsType<OkResult>(productResult);
+            Assert.IsType<OkResult>(productResult.Result);
             //assert
             Assert.NotNull(productResult);
 
 
         }
-        private Users Userdata()
-        {
-            Users userData = new Users
-            {
+        [Fact]
 
-                Id = 1,
-                FirstName = "Vinnnita",
-                LastName = "Abburi",
-                Email = "vinitaabburi222@gmail.com",
-                Password = "Vinni@1234",
-                UserName = "Vinni"
-            };
-            return userData;
+        public void Update_Failure()
+        {
+            Users user = new Users();
+            user.Id = 1;
+            user.FirstName = "Vinita";
+            user.LastName = "Abburi";
+            user.Email = "vinitaabburi222@gmail.com";
+            user.Password = "Vinni@1234";
+            user.UserName = "Vinni";
+            UserRep.Setup(x => x.Update(2, user)).Throws<ItemUpdateException>();
+            var userController = new UserController(UserRep.Object);
+
+            //act
+            var productResult = userController.PutUser(2, user);
+
+
+            Assert.IsType<BadRequestResult>(productResult.Result);
+            //assert
+
+
         }
 
+        private List<Users> GetUserssData()
+        {
+            List<Users> usersData = new List<Users>
+                {
+                    new Users
+                    {
+                        Id = 1,
+                        FirstName = "Vinita",
+                        LastName = "Abburi",
+                        Email = "vinitaabburi222@gmail.com",
+                        Password = "Vinni@1234",
+                        UserName = "Vinni"
+                    },
+
+                };
+            return usersData;
+        }
 
     }
 }
