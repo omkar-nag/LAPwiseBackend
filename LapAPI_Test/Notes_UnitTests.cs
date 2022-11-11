@@ -61,7 +61,7 @@ namespace Profile_Test
             var notesData = GetNotesData()[0];
 
             NotesRep.Setup(x => x.PutNotes(notesData)).Returns(notesData);
-
+            NotesRep.Object.PostNotes(notesData);
             var notesController = new NotesController(NotesRep.Object);
 
             //act
@@ -96,7 +96,7 @@ namespace Profile_Test
             var notesData = GetNotesData()[0];
 
             NotesRep.Setup(x => x.DeleteNotes(1)).ReturnsAsync(() => notesData);
-
+            NotesRep.Object.PostNotes(notesData);
             var notesController = new NotesController(NotesRep.Object);
 
             //act
