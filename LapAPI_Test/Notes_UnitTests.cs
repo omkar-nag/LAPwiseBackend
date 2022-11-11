@@ -20,7 +20,7 @@ namespace Profile_Test
             NotesRep = new Mock<INotesRepository>();
         }
         [Fact]
-        public void Post_Success()
+        public void Post_ShouldReturnOkObjectResult_WhenIdIsNegative()
         {
             //arrange
             var notesData = GetNotesData()[0];
@@ -39,7 +39,7 @@ namespace Profile_Test
             Assert.Equal<Notes>(notesData, actual);
         }
         [Fact]
-        public void Post_Failure()
+        public void Post_ShouldReturnBadRequestResult_WhenIdIsPositive()
         {
             //arrange
             var notesData = GetNotesData()[0];
@@ -56,7 +56,7 @@ namespace Profile_Test
 
         }
         [Fact]
-        public void PutNotes_Success()
+        public void PutNotes_ShouldReturnUpdatedNote_WhenNoteExists()
         {
             var notesData = GetNotesData()[0];
 
@@ -74,7 +74,7 @@ namespace Profile_Test
             Assert.Equal<Notes>(actual, notesData);
         }
         [Fact]
-        public void PutNotes_Failure()
+        public void PutNotes_ShouldReturnNotFoundObjectResult_WhenNoteDoesNotExists()
         {
             var notesData = GetNotesData()[0];
             notesData.UserId = 2;
@@ -91,7 +91,7 @@ namespace Profile_Test
             Assert.IsType<NotFoundObjectResult>(actual);
         }
         [Fact]
-        public async void DeleteNote_Success()
+        public async void DeleteNote_ShouldReturnOkObjectResult_WhenNoteExists()
         {
             var notesData = GetNotesData()[0];
 

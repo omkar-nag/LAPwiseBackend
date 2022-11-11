@@ -21,12 +21,19 @@ namespace LapAPI.BusinessLayer.UserRepository
         }
         public async Task<Users> GetById(int userId)
         {
+            Users users = new Users();
             if (!UserExists(userId))
             {
                 throw new ItemNotFoundException();
             }
-            var users = await _dbContext.Users.FindAsync(userId);
-
+            try
+            {
+                users = await _dbContext.Users.Where(x=>x.Id==userId).SingleAsync();
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
             return users;
         }
 
