@@ -12,12 +12,10 @@ namespace LapAPI.Controllers
     public class NotesController : CustomControllerBase
     {
         private readonly INotesRepository _repository;
-        private readonly ILogger<Notes> _logger;
 
-        public NotesController(INotesRepository repository, ILogger<Notes> logger)
+        public NotesController(INotesRepository repository)
         {
             _repository = repository;
-            _logger = logger;
         }
 
         [HttpGet]
@@ -30,15 +28,11 @@ namespace LapAPI.Controllers
 
                 var notes = await _repository.GetNotesByUserId(userId);
 
-                _logger.LogInformation($"{DateTime.UtcNow.ToString()} Fetching notes for userId: {userId}");
-
                 return Ok(notes);
 
             }
             catch (ItemNotFoundException ex)
             {
-                _logger.LogInformation($"{DateTime.UtcNow.ToString()} ItemNotFoundException: Database exception occured while Fetching notes for userId: {userId}");
-
                 return NotFound(ex);
 
             }
@@ -56,23 +50,17 @@ namespace LapAPI.Controllers
 
                 var postedNote = _repository.PostNotes(note);
 
-                _logger.LogInformation($"{DateTime.UtcNow.ToString()} Note with noteId: {note.Id} posted");
-
                 return Ok(postedNote);
 
             }
             catch(InvalidOperationException ex)
             {
 
-                _logger.LogError($"{DateTime.UtcNow.ToString()}InvalidOperationException: @Note with noteId: {note.Id}\n {ex.Message}");
-
                 return BadRequest();
 
             }
             catch(DbUpdateException ex)
             {
-
-                _logger.LogError($"{DateTime.UtcNow.ToString()}DbUpdateException: Note with noteId: {note.Id} cannot be added because of DbUpdateException: {ex.Message}");
 
                 return StatusCode(500, ex);
 
@@ -89,16 +77,11 @@ namespace LapAPI.Controllers
 
                 var updatedNote = _repository.PutNotes(notes);
 
-                _logger.LogInformation($"{DateTime.UtcNow.ToString()} Note with noteId: {updatedNote.Id} updated");
-
                 return Ok(updatedNote);
 
             }
             catch(ItemNotFoundException ex)
             {
-
-                _logger.LogError($"{DateTime.UtcNow.ToString()} ItemNotFoundException: Note with ID = {notes.Id} does not exist ");
-
 
                 return NotFound(ex);
 
@@ -112,21 +95,17 @@ namespace LapAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteNotes(int id)
+        public async Task<ActionResult<Notes>> DeleteNotes(int id)
         {
 
             try
             {
 
-                _logger.LogInformation($"{DateTime.UtcNow.ToString()} Deleted Note with noteId: {id}");
-
-                await _repository.DeleteNotes(id);
+                 await _repository.DeleteNotes(id);
 
             }
             catch (ItemNotFoundException ex)
             {
-
-                _logger.LogError($"{DateTime.UtcNow.ToString()} ItemNotFoundException: Note with noteId: {id} does not exist");
 
                 return NotFound(ex);
 
@@ -134,12 +113,10 @@ namespace LapAPI.Controllers
             catch(DbUpdateException ex)
             {
 
-                _logger.LogError($"{DateTime.UtcNow.ToString()} DbUpdateException: Note with noteId: {id} cannot be deleted ");
-
                 return StatusCode(500, ex);
 
             }
-            return Ok();
+            return Ok(new {message="success"});
         }
 
     }
